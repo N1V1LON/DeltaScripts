@@ -1,0 +1,6 @@
+# Служебные папки Delta executor — не коммитим
+/Autoexecute/
+/Internals/
+/Workspace/
+/.luaurc
+.nomedia
