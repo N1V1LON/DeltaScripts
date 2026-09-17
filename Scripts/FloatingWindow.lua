@@ -15,10 +15,10 @@ local PAD = 8
 local ROW_H = 44
 local MAX_ROWS = 6
 
-function FloatingWindow.new()
+function FloatingWindow.new(title)
 	local self = setmetatable({}, FloatingWindow)
 
-	local base = WindowBase.new("Scripts", "Скрипты")
+	local base = WindowBase.new("Scripts", title or "Скрипты")
 	self.Base = base
 	self.Gui = base.Gui
 	self.Root = base.Root

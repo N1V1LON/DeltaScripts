@@ -60,7 +60,7 @@ local function openWindow()
 
 	local addBtn = Instance.new("TextButton")
 	addBtn.Name = "Add"
-	addBtn.Position = UDim2.new(1, -PAD, 1, -(btnH + PAD))
+	addBtn.Position = UDim2.new(0, PAD, 1, -(btnH + PAD))
 	addBtn.Size = UDim2.new(1, -PAD * 2, 0, btnH)
 	addBtn.BackgroundColor3 = P.info
 	addBtn.BorderSizePixel = 0
@@ -130,8 +130,8 @@ local function openWindow()
 		end
 
 		local count = #pts
-		local contentH = 24 + count * ROW_H + 6 + btnH + PAD
-		base:setSize(WIDTH, 36 + math.clamp(contentH, 140, 420))
+		local contentH = math.max(24 + count * ROW_H + btnH + PAD * 2, 140)
+		base:setSize(WIDTH, 36 + math.min(contentH, 420))
 		list.CanvasSize = UDim2.fromOffset(0, math.max(count * ROW_H, 0))
 	end
 
