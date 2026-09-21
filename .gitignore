@@ -4,3 +4,6 @@
 /Workspace/
 /.luaurc
 .nomedia
+node_modules
+package-lock.json
+package.json
