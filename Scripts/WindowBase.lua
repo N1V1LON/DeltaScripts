@@ -231,8 +231,6 @@ function WindowBase.new(key, titleText, position)
 	self.CloseButton = closeBtn
 	self._destroyed = false
 
-	WindowBase.Registry[key] = self
-
 	return self
 end
 

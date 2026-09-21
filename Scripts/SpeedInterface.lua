@@ -10,11 +10,22 @@ local P = WindowBase.Palette
 
 local window = nil
 
-local PAD = 10
-local BTN_H = 36
-local WIN_WIDTH = 260
+local function openWindow()
+	if window then
+		window:Destroy()
+		window = nil
+		return
+	end
 
-local function createStatusLabel(parent)
+	local base = WindowBase.new("Speed", "Скорость")
+	window = base
+
+	local W = 260
+	local H = 210
+	local PAD = 10
+	local btnH = 36
+	local content = base.Content
+
 	local status = Instance.new("TextLabel")
 	status.Name = "Status"
 	status.Position = UDim2.fromOffset(PAD, PAD)
@@ -24,11 +35,8 @@ local function createStatusLabel(parent)
 	status.Font = Enum.Font.GothamSemibold
 	status.TextSize = 15
 	status.TextXAlignment = Enum.TextXAlignment.Left
-	status.Parent = parent
-	return status
-end
+	status.Parent = content
 
-local function createSpeedBox(parent)
 	local box = Instance.new("TextBox")
 	box.Name = "SpeedBox"
 	box.Position = UDim2.fromOffset(PAD, PAD + 28)
@@ -40,28 +48,38 @@ local function createSpeedBox(parent)
 	box.TextColor3 = P.text
 	box.Font = Enum.Font.GothamSemibold
 	box.TextSize = 15
-	box.Parent = parent
+	box.Parent = content
 	Instance.new("UICorner", box).CornerRadius = UDim.new(0, 8)
-	return box
-end
 
-local function createButton(parent, name, text, posY, bgColor, textColor)
-	local btn = Instance.new("TextButton")
-	btn.Name = name
-	btn.Position = UDim2.fromOffset(PAD, posY)
-	btn.Size = UDim2.new(1, -PAD * 2, 0, BTN_H)
-	btn.BackgroundColor3 = bgColor
-	btn.BorderSizePixel = 0
-	btn.Text = text
-	btn.TextColor3 = textColor
-	btn.Font = Enum.Font.GothamSemibold
-	btn.TextSize = 16
-	btn.Parent = parent
-	Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
-	return btn
-end
+	local applyBtn = Instance.new("TextButton")
+	applyBtn.Name = "Apply"
+	applyBtn.Position = UDim2.fromOffset(PAD, PAD + 28 + 42)
+	applyBtn.Size = UDim2.new(1, -PAD * 2, 0, btnH)
+	applyBtn.BackgroundColor3 = P.accent
+	applyBtn.BorderSizePixel = 0
+	applyBtn.Text = "Применить"
+	applyBtn.TextColor3 = Color3.new(1, 1, 1)
+	applyBtn.Font = Enum.Font.GothamSemibold
+	applyBtn.TextSize = 16
+	applyBtn.Parent = content
+	Instance.new("UICorner", applyBtn).CornerRadius = UDim.new(0, 8)
 
-local function bindWindowEvents(status, box, applyBtn, resetBtn)
+	local resetBtn = Instance.new("TextButton")
+	resetBtn.Name = "Reset"
+	resetBtn.Position = UDim2.fromOffset(PAD, PAD + 28 + 42 + btnH + 8)
+	resetBtn.Size = UDim2.new(1, -PAD * 2, 0, btnH)
+	resetBtn.BackgroundColor3 = P.btn
+	resetBtn.BorderSizePixel = 0
+	resetBtn.Text = "Сброс (" .. SpeedLogic.BASE_SPEED .. ")"
+	resetBtn.TextColor3 = P.text
+	resetBtn.Font = Enum.Font.GothamSemibold
+	resetBtn.TextSize = 16
+	resetBtn.Parent = content
+	Instance.new("UICorner", resetBtn).CornerRadius = UDim.new(0, 8)
+
+	local contentH = PAD + 28 + 42 + btnH + 8 + btnH + PAD
+	base:setSize(W, 36 + contentH)
+
 	local function refreshStatus()
 		status.Text = ("Текущая скорость: %.0f"):format(SpeedLogic.getCurrentSpeed())
 	end
@@ -89,34 +107,6 @@ local function bindWindowEvents(status, box, applyBtn, resetBtn)
 
 	refreshStatus()
 	box.Text = tostring(SpeedLogic.getCurrentSpeed())
-end
-
-local function openWindow()
-	if window then
-		window:Destroy()
-		window = nil
-		return
-	end
-
-	local base = WindowBase.new("Speed", "Скорость")
-	window = base
-
-	local content = base.Content
-
-	local status = createStatusLabel(content)
-	local box = createSpeedBox(content)
-
-	local applyPosY = PAD + 28 + 42
-	local applyBtn = createButton(content, "Apply", "Применить", applyPosY, P.accent, Color3.new(1, 1, 1))
-
-	local resetPosY = applyPosY + BTN_H + 8
-	local resetText = "Сброс (" .. SpeedLogic.BASE_SPEED .. ")"
-	local resetBtn = createButton(content, "Reset", resetText, resetPosY, P.btn, P.text)
-
-	bindWindowEvents(status, box, applyBtn, resetBtn)
-
-	local contentH = resetPosY + BTN_H + PAD
-	base:setSize(WIN_WIDTH, 36 + contentH)
 
 	base.OnClosed = function()
 		window = nil
