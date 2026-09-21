@@ -47,22 +47,61 @@ function run() {
 			end
 		}
 
-		local spawnedTasks = {}
+		local activeTasks = {}
 		task = {
 			spawn = function(f)
-				table.insert(spawnedTasks, f)
-				return #spawnedTasks
+				local thread = coroutine.create(f)
+				local taskObj = { thread = thread, cancelled = false }
+				table.insert(activeTasks, taskObj)
+				local ok, err = coroutine.resume(thread)
+				if not ok then error(err) end
+				return taskObj
 			end,
-			cancel = function(t)
-				if spawnedTasks[t] then
-					spawnedTasks[t] = nil
+			cancel = function(taskObj)
+				if type(taskObj) == "table" then
+					taskObj.cancelled = true
+				end
+				for i, t in ipairs(activeTasks) do
+					if t == taskObj then
+						table.remove(activeTasks, i)
+						break
+					end
 				end
 			end,
-			wait = function(s) end
+			wait = function(s)
+				coroutine.yield(s)
+			end,
+			step = function()
+				for i = #activeTasks, 1, -1 do
+					local t = activeTasks[i]
+					if t.cancelled or coroutine.status(t.thread) == "dead" then
+						table.remove(activeTasks, i)
+					else
+						local ok, err = coroutine.resume(t.thread)
+						if not ok then error(err) end
+						if coroutine.status(t.thread) == "dead" then
+							table.remove(activeTasks, i)
+						end
+					end
+				end
+			end,
+			getActiveCount = function()
+				local count = 0
+				for _, t in ipairs(activeTasks) do
+					if not t.cancelled and coroutine.status(t.thread) ~= "dead" then
+						count = count + 1
+					end
+				end
+				return count
+			end,
+			reset = function()
+				activeTasks = {}
+			end
 		}
 
 		_G.ResetSpeedLogicState = function()
 			env.SpeedLogic = nil
+			task.reset()
 			local chunk, err = loadstring(${JSON.stringify(speedLogicCode)}, "@Scripts/SpeedLogic.lua")
 			if not chunk then error(err) end
 			_G.SpeedLogic = chunk()
