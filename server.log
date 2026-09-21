@@ -1,0 +1,18 @@
+[Server] Loading ControlerScript.lua...
+[CS] V26.0.1D === загружаю модули
+[CS] (ScriptModule.lua загружен)
+[CS] (WindowBase.lua загружен)
+[CS] (FloatingWindow.lua загружен)
+[CS] (SpeedLogic.lua загружен)
+[CS] (SpeedInterface.lua загружен)
+[CS] (TPLogic.lua загружен)
+[CS] (TPInterface.lua загружен)
+[CS] === создаю окно и контроллер
+[CS] === ГОТОВО, загружено модулей: 7, зарегистрировано: 2
+[Server] ControlerScript.lua loaded successfully!
+====================================================
+ Roblox UI to WebUI Engine running on http://localhost:3000
+ Cross-platform: AMD64/ARM (Windows/Linux/Termux)
+====================================================
+[Server] Web Client connected
+[Server] Web Client disconnected
