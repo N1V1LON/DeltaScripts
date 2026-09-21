@@ -107,6 +107,17 @@ runTest("setSpeed() and resetSpeed() when Character is nil", function()
 	assert_eq(okReset, true, "resetSpeed should return true even if character is nil")
 end)
 
+runTest("setSpeed() with floating point numbers", function()
+	local SL = _G.ResetSpeedLogicState()
+	local mockHum = { WalkSpeed = 16.5 }
+	_G.MockPlayer.Character = _G.CreateMockCharacter(mockHum)
+
+	local res = SL.setSpeed(32.25)
+	assert_eq(res, true, "setSpeed should return true for float speed")
+	assert_eq(mockHum.WalkSpeed, 32.25, "WalkSpeed should update to float 32.25")
+	assert_eq(SL.getBaseSpeed(), 16.5, "getBaseSpeed should return float original speed 16.5")
+end)
+
 if failedCount > 0 then
 	error(string.format("%d tests failed!", failedCount))
 else
