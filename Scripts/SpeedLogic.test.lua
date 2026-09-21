@@ -63,7 +63,10 @@ runTest("getBaseSpeed() initial state", function()
 	assert_eq(SpeedLogic.getBaseSpeed(), 16, "getBaseSpeed should return BASE_SPEED when no original speed is recorded")
 end)
 
-runTest("setSpeed() and getBaseSpeed() lifecycle", function()
+runTest("setSpeed() sets WalkSpeed, captures originalSpeed, and returns true", function()
+	if _G.ResetSpeedLogicState then _G.ResetSpeedLogicState() end
+	SpeedLogic = require_speed_logic and require_speed_logic() or (getgenv and getgenv().SpeedLogic or _G.SpeedLogic)
+
 	local mockHum = { WalkSpeed = 16 }
 	_G.MockPlayer.Character = _G.CreateMockCharacter(mockHum)
 
@@ -71,25 +74,113 @@ runTest("setSpeed() and getBaseSpeed() lifecycle", function()
 	assert_eq(res, true, "setSpeed should return true")
 	assert_eq(mockHum.WalkSpeed, 50, "Humanoid WalkSpeed should update to 50")
 	assert_eq(SpeedLogic.getBaseSpeed(), 16, "getBaseSpeed should return original speed 16")
-
-	-- Call setSpeed again with a different value
-	SpeedLogic.setSpeed(100)
-	assert_eq(mockHum.WalkSpeed, 100, "Humanoid WalkSpeed should update to 100")
-	assert_eq(SpeedLogic.getBaseSpeed(), 16, "getBaseSpeed should still retain initial original speed 16")
+	assert_eq(SpeedLogic.getCurrentSpeed(), 50, "getCurrentSpeed should return 50")
 end)
 
-runTest("resetSpeed() lifecycle", function()
-	local mockHum = { WalkSpeed = 100 }
+runTest("setSpeed() preserves originalSpeed on subsequent calls", function()
+	if _G.ResetSpeedLogicState then _G.ResetSpeedLogicState() end
+	SpeedLogic = require_speed_logic and require_speed_logic() or (getgenv and getgenv().SpeedLogic or _G.SpeedLogic)
+
+	local mockHum = { WalkSpeed = 16 }
 	_G.MockPlayer.Character = _G.CreateMockCharacter(mockHum)
+
+	SpeedLogic.setSpeed(50)
+	assert_eq(mockHum.WalkSpeed, 50, "First setSpeed WalkSpeed")
+	assert_eq(SpeedLogic.getBaseSpeed(), 16, "Original speed captured on first setSpeed")
+
+	SpeedLogic.setSpeed(100)
+	assert_eq(mockHum.WalkSpeed, 100, "Second setSpeed WalkSpeed")
+	assert_eq(SpeedLogic.getBaseSpeed(), 16, "Original speed should remain 16 after second setSpeed")
+end)
+
+runTest("setSpeed() behavior when Character or Humanoid is nil", function()
+	if _G.ResetSpeedLogicState then _G.ResetSpeedLogicState() end
+	SpeedLogic = require_speed_logic and require_speed_logic() or (getgenv and getgenv().SpeedLogic or _G.SpeedLogic)
+
+	_G.MockPlayer.Character = nil
+	local okSet = SpeedLogic.setSpeed(40)
+	assert_eq(okSet, true, "setSpeed should return true even if character is nil")
+	assert_eq(SpeedLogic.canRun(), false, "canRun should return false when character is nil")
+	assert_eq(SpeedLogic.getCurrentSpeed(), 0, "getCurrentSpeed should return 0 when character is nil")
+end)
+
+runTest("setSpeed() keep task maintains desiredSpeed when WalkSpeed is modified externally", function()
+	if _G.ResetSpeedLogicState then _G.ResetSpeedLogicState() end
+	SpeedLogic = require_speed_logic and require_speed_logic() or (getgenv and getgenv().SpeedLogic or _G.SpeedLogic)
+
+	local mockHum = { WalkSpeed = 16 }
+	_G.MockPlayer.Character = _G.CreateMockCharacter(mockHum)
+
+	SpeedLogic.setSpeed(50)
+	assert_eq(mockHum.WalkSpeed, 50, "WalkSpeed set to 50 initially")
+
+	-- External script resets WalkSpeed back to 16
+	mockHum.WalkSpeed = 16
+
+	-- Step task loop execution
+	if task and task.step then task.step() end
+
+	assert_eq(mockHum.WalkSpeed, 50, "keepTask should restore WalkSpeed back to 50")
+end)
+
+runTest("setSpeed() prevents duplicate keep tasks", function()
+	if _G.ResetSpeedLogicState then _G.ResetSpeedLogicState() end
+	SpeedLogic = require_speed_logic and require_speed_logic() or (getgenv and getgenv().SpeedLogic or _G.SpeedLogic)
+
+	local mockHum = { WalkSpeed = 16 }
+	_G.MockPlayer.Character = _G.CreateMockCharacter(mockHum)
+
+	SpeedLogic.setSpeed(50)
+	if task and task.getActiveCount then
+		assert_eq(task.getActiveCount(), 1, "One keep task should be active")
+	end
+
+	SpeedLogic.setSpeed(75)
+	if task and task.getActiveCount then
+		assert_eq(task.getActiveCount(), 1, "Should still be only one keep task active")
+	end
+
+	SpeedLogic.setSpeed(100)
+	if task and task.getActiveCount then
+		assert_eq(task.getActiveCount(), 1, "Should still be only one keep task active")
+	end
+
+	assert_eq(mockHum.WalkSpeed, 100, "WalkSpeed updated to 100")
+end)
+
+runTest("setSpeed() with floating-point speed values", function()
+	if _G.ResetSpeedLogicState then _G.ResetSpeedLogicState() end
+	SpeedLogic = require_speed_logic and require_speed_logic() or (getgenv and getgenv().SpeedLogic or _G.SpeedLogic)
+
+	local mockHum = { WalkSpeed = 16.5 }
+	_G.MockPlayer.Character = _G.CreateMockCharacter(mockHum)
+
+	SpeedLogic.setSpeed(32.25)
+	assert_eq(mockHum.WalkSpeed, 32.25, "WalkSpeed should equal 32.25")
+	assert_eq(SpeedLogic.getBaseSpeed(), 16.5, "getBaseSpeed should equal 16.5")
+end)
+
+runTest("setSpeed() and resetSpeed() lifecycle interaction", function()
+	if _G.ResetSpeedLogicState then _G.ResetSpeedLogicState() end
+	SpeedLogic = require_speed_logic and require_speed_logic() or (getgenv and getgenv().SpeedLogic or _G.SpeedLogic)
+
+	local mockHum = { WalkSpeed = 16 }
+	_G.MockPlayer.Character = _G.CreateMockCharacter(mockHum)
+
+	SpeedLogic.setSpeed(50)
+	assert_eq(mockHum.WalkSpeed, 50, "WalkSpeed set to 50")
 
 	local res = SpeedLogic.resetSpeed()
 	assert_eq(res, true, "resetSpeed should return true")
 	assert_eq(mockHum.WalkSpeed, 16, "Humanoid WalkSpeed should reset to original speed 16")
+	if task and task.getActiveCount then
+		assert_eq(task.getActiveCount(), 0, "Keep task should be cancelled on resetSpeed")
+	end
 end)
 
 runTest("resetSpeed() without prior setSpeed()", function()
-	-- Reset internal state for test clean slate
-	_G.ResetSpeedLogicState()
+	if _G.ResetSpeedLogicState then _G.ResetSpeedLogicState() end
+	SpeedLogic = require_speed_logic and require_speed_logic() or (getgenv and getgenv().SpeedLogic or _G.SpeedLogic)
 
 	local mockHum = { WalkSpeed = 20 }
 	_G.MockPlayer.Character = _G.CreateMockCharacter(mockHum)
