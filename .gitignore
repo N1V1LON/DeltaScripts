@@ -4,8 +4,6 @@
 /Workspace/
 /.luaurc
 .nomedia
-
-package-lock.json
-server.log
 node_modules
+package-lock.json
 package.json
