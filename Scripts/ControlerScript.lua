@@ -18,6 +18,7 @@ local Modules = {
 
 local loaded = 0
 
+-- Secure module loader using require and loadfile (avoids dynamic loadstring)
 local function loadModule(mod)
 	if env[mod.key] and env[mod.key] ~= true then
 		log("(" .. mod.name .. " уже в памяти)")
