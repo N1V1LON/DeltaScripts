@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Roblox UI -> WebUI Emulator Engine</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+	<div id="app-container">
+		<header class="app-header">
+			<div class="logo">
+				<span class="icon">⚡</span>
+				<span class="title">Roblox UI Web Engine</span>
+				<span class="badge">Cross-Platform AMD64 / ARM</span>
+			</div>
+			<div class="status-bar">
+				<span id="ws-status" class="status-indicator disconnected">Отключено</span>
+				<button id="reload-btn" class="btn">Перезагрузить скрипты</button>
+			</div>
+		</header>
+
+		<main class="app-viewport">
+			<div id="roblox-screen" class="roblox-viewport">
+				<!-- ScreenGuis and Frames will be dynamically rendered here -->
+			</div>
+		</main>
+
+		<footer class="app-footer">
+			<span>Эмулятор Roblox UI (ScreenGui, Frame, Buttons, Logic) &bull; PowerShell / Ubuntu / Termux</span>
+		</footer>
+	</div>
+
+	<script src="app.js"></script>
+</body>
+</html>

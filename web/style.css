@@ -1,0 +1,168 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+	background-color: #121216;
+	color: #e1e1e6;
+	height: 100vh;
+	overflow: hidden;
+}
+
+#app-container {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+}
+
+.app-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 12px 20px;
+	background-color: #1a1a22;
+	border-bottom: 1px solid #2d2d38;
+	z-index: 100;
+}
+
+.logo {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+}
+
+.logo .title {
+	font-weight: 700;
+	font-size: 16px;
+	color: #ffffff;
+}
+
+.logo .badge {
+	font-size: 11px;
+	background: #2a2a36;
+	padding: 3px 8px;
+	border-radius: 12px;
+	color: #4e8560;
+	border: 1px solid #3e684d;
+}
+
+.status-bar {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.status-indicator {
+	font-size: 12px;
+	padding: 4px 10px;
+	border-radius: 12px;
+	font-weight: 600;
+}
+
+.status-indicator.connected {
+	background-color: #1b3d2b;
+	color: #43b581;
+}
+
+.status-indicator.disconnected {
+	background-color: #3d1b1b;
+	color: #f04747;
+}
+
+.btn {
+	background-color: #32323c;
+	color: #ffffff;
+	border: 1px solid #424250;
+	padding: 6px 14px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 13px;
+	transition: background 0.2s;
+}
+
+.btn:hover {
+	background-color: #40404d;
+}
+
+.app-viewport {
+	flex: 1;
+	position: relative;
+	background-color: #15151a;
+	background-image: radial-gradient(#262633 1px, transparent 1px);
+	background-size: 20px 20px;
+	overflow: hidden;
+}
+
+.roblox-viewport {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
+
+/* Dynamic Roblox Instance styling */
+.rbx-instance {
+	position: absolute;
+	box-sizing: border-box;
+	user-select: none;
+	overflow: hidden;
+	white-space: nowrap;
+}
+
+.rbx-ScreenGui, .rbx-Folder {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	overflow: visible;
+}
+
+.rbx-Frame, .rbx-ScrollingFrame, .rbx-TextButton, .rbx-TextLabel, .rbx-TextBox {
+	pointer-events: auto;
+}
+
+.rbx-TextButton {
+	cursor: pointer;
+	outline: none;
+	border: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.rbx-TextButton:active {
+	filter: brightness(0.9);
+}
+
+.rbx-TextLabel {
+	display: flex;
+	align-items: center;
+	pointer-events: none;
+}
+
+.rbx-TextBox {
+	outline: none;
+	border: none;
+	padding: 0 10px;
+}
+
+.rbx-ScrollingFrame {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
+.app-footer {
+	padding: 8px 20px;
+	background-color: #121216;
+	border-top: 1px solid #22222b;
+	font-size: 11px;
+	color: #727280;
+	text-align: center;
+	z-index: 100;
+}
