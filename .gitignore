@@ -7,3 +7,9 @@
 node_modules
 package-lock.json
 package.json
+
+# Локальные артефакты
+*.bak
+luac_out.txt
+Scripts/.stitch/
+Scripts/stitch-output/
