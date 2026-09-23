@@ -1,0 +1,55 @@
+{
+	"language": "ru",
+	"theme": {
+		"gui": "dark",
+		"module": "dark"
+	},
+	"ui": {
+		"transparency": 0
+	},
+	"window": {
+		"width": 560,
+		"height": 360
+	},
+	"icons": {
+		"SpeedWindow": "Bolt.png",
+		"TPWindow": "TallArrow.png"
+	},
+	"modules": {
+		"SpeedWindow": {
+			"defaultSpeed": 16,
+			"minSpeed": 16,
+			"maxSpeed": 200,
+			"enabled": false
+		},
+		"TPWindow": {
+			"holdTime": 0.7,
+			"points": []
+		},
+		"NoclipWindow": {
+			"enabled": false
+		},
+		"JumpWindow": {
+			"defaultPower": 50,
+			"minPower": 20,
+			"maxPower": 120,
+			"enabled": false
+		},
+		"SpoofingWindow": {
+			"enabled": false,
+			"speed": true,
+			"jump": true,
+			"tp": true
+		},
+		"PlayersWindow": {
+			"enabled": false,
+			"showDistance": true,
+			"showHp": true
+		},
+		"FastHealWindow": {
+			"enabled": false,
+			"amount": 5
+		},
+		"SettingsWindow": {}
+	}
+}

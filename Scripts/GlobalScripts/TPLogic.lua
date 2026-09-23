@@ -10,6 +10,35 @@ local LocalPlayer = Players.LocalPlayer
 local store = env.TPModuleStore or {}
 env.TPModuleStore = store
 
+local function persist()
+	local GC = env.GlobalControler
+	if GC and GC.SaveModuleState then
+		local pts = {}
+		for i, pos in ipairs(store) do
+			pts[i] = { x = pos.X, y = pos.Y, z = pos.Z }
+		end
+		GC:SaveModuleState("TPWindow", { points = pts })
+	end
+end
+
+function TPLogic.setPoints(list)
+	store = {}
+	env.TPModuleStore = store
+	if type(list) == "table" then
+		for _, item in ipairs(list) do
+			if type(item) == "table" then
+				local x = tonumber(item.x or item[1])
+				local y = tonumber(item.y or item[2])
+				local z = tonumber(item.z or item[3])
+				if x and y and z then
+					store[#store + 1] = Vector3.new(x, y, z)
+				end
+			end
+		end
+	end
+	return #store
+end
+
 function TPLogic.getRoot()
 	local char = LocalPlayer.Character
 	if not char then return nil end
@@ -33,12 +62,14 @@ function TPLogic.addPoint()
 	if not root then return nil end
 	local point = root.Position
 	table.insert(store, point)
+	persist()
 	return #store
 end
 
 function TPLogic.deletePoint(index)
 	if not store[index] then return false end
 	table.remove(store, index)
+	persist()
 	return true
 end
 
@@ -58,10 +89,9 @@ function TPLogic.teleportTo(index)
 		teleportTask = nil
 	end
 
-	local tries = 50
 	local started = os.clock()
 	teleportTask = task.spawn(function()
-		for i = 1, tries do
+		for _ = 1, 50 do
 			if os.clock() - started > 2.0 then break end
 			local r = TPLogic.getRoot()
 			if r then

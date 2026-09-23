@@ -72,5 +72,24 @@ function SpeedLogic.getBaseSpeed()
 	return originalSpeed or SpeedLogic.BASE_SPEED
 end
 
+function SpeedLogic.isEnabled()
+	return desiredSpeed ~= nil
+end
+
+function SpeedLogic.getDesired()
+	return desiredSpeed
+end
+
+LocalPlayer.CharacterAdded:Connect(function()
+	if desiredSpeed then
+		task.wait(0.2)
+		local h = SpeedLogic.getHumanoid()
+		if h then
+			h.WalkSpeed = desiredSpeed
+		end
+		startKeep()
+	end
+end)
+
 env.SpeedLogic = SpeedLogic
 return SpeedLogic
